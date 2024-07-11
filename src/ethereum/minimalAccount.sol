@@ -38,7 +38,7 @@ contract MinimalAccount is IAccount,Ownable {
     }
 
     modifier onlyEntryPointOrOwner() {
-        if (msg.sender != address(i_entryPoint) || msg.sender != owner()) {
+        if (msg.sender != address(i_entryPoint) && msg.sender != owner()) {
             revert NotFromEntryPointOrOwner();
         }
         _;
@@ -54,7 +54,7 @@ contract MinimalAccount is IAccount,Ownable {
      * @param value      : The amount of ether to send
      * @param functionData : The data of the function to call
      */
-    function execute(address destination,uint256 value,bytes calldata functionData) external onlyEntryPoint {
+    function execute(address destination,uint256 value,bytes calldata functionData) external onlyEntryPointOrOwner {
         (bool success,bytes memory results) = destination.call{value: value}(functionData);
         if (!success) {
             revert MinimalAccount_CallFailed(results);
@@ -71,7 +71,7 @@ contract MinimalAccount is IAccount,Ownable {
         return address(i_entryPoint);
     }
 
-    
+
     // Validate user's signature and nonce
     // the entryPoint will make the call to the recipient only if this validation call returns successfully.
     // signature failure should be reported by returning SIG_VALIDATION_FAILED (1).
@@ -83,7 +83,7 @@ contract MinimalAccount is IAccount,Ownable {
      */
     function validateUserOp(PackedUserOperation calldata userOp,bytes32 userOpHash,uint256 missingAccountFunds)
     external  
-    onlyEntryPoint
+    onlyEntryPointOrOwner
     returns (uint256 validationData)
     {
         // This is a minimal implementation of the validateUserOp function

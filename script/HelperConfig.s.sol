@@ -6,7 +6,7 @@ import {Script} from "forge-std/Script.sol";
 import {EntryPoint} from "lib/account-abstraction/contracts/core/EntryPoint.sol";
 
 contract HelperConfig is Script   {
-    error  HelperConfig_InvalidChainId();
+    error  HelperConfig_InvalidChainId(uint256 chainId);
 
 
     struct NetworkConfig{
@@ -14,7 +14,7 @@ contract HelperConfig is Script   {
         address usdc;
         address account;
     }
-    uint256 constant LOCAL_NETWORK_CAHIN_ID = 1;
+    uint256 constant LOCAL_NETWORK_CAHIN_ID = 31337;
     uint256 constant ETH_SEPOLIA_CHAIN_ID = 11155111;
     uint256 constant AMOY_CHAIN_ID = 80002;
     address constant BURNER_WALLET = 0xc92AF7f5D63bE657c55A5519936d40F3E65070F2;
@@ -53,7 +53,7 @@ contract HelperConfig is Script   {
         }else if(networkConfigs[chainId].account != address(0)){
             return networkConfigs[chainId];
         }else{
-            revert HelperConfig_InvalidChainId();
+            revert HelperConfig_InvalidChainId(chainId);
         }
     }
 
